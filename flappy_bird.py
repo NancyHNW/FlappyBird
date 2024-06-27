@@ -17,12 +17,14 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Flappy Bird")
 
 # load background
-bg = pygame.image.load("bg.png")
-ground = pygame.image.load("ground.png")
+bg = pygame.image.load("assets/bg.png")
+ground = pygame.image.load("assets/ground.png")
+
 
 class Bird(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
+
 
 # create game loop
 run = True
