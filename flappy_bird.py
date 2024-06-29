@@ -12,8 +12,10 @@ fps = 60
 flying = False
 game_over = False
 pipe_gap = 150
-pipe_frequency = 1500  #ms
+pipe_frequency = 1500  # ms
 last_pipe = pygame.time.get_ticks() - pipe_frequency
+score = 0
+pass_pipe = False
 
 # create game window
 screen_width = 864
@@ -21,9 +23,20 @@ screen_height = 936
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Flappy Bird")
 
+# define game font
+font = pygame.font.SysFont("Bauhaus 93", 60)
+
+# define colours
+white = (255, 255, 255)
+
 # load background
 bg = pygame.image.load("assets/bg.png")
 ground = pygame.image.load("assets/ground.png")
+
+
+def draw_text(text, font, colour, x, y):
+    img = font.render(text, True, colour)
+    screen.blit(img, (x, y))
 
 
 class Bird(pygame.sprite.Sprite):
@@ -74,7 +87,7 @@ class Bird(pygame.sprite.Sprite):
                 self.clicked = False
 
             # rotate the bird
-            self.image = pygame.transform.rotate(self.images[self.index], self.vel*-2)
+            self.image = pygame.transform.rotate(self.images[self.index], self.vel * -2)
 
         else:  # game is over, turn bird 90 degree clockwise (face ground)
             self.image = pygame.transform.rotate(self.images[self.index], -90)
@@ -100,14 +113,12 @@ class Pipe(pygame.sprite.Sprite):
             self.kill()
 
 
-flappy = Bird(100, int(screen_height/2))
+flappy = Bird(100, int(screen_height / 2))
 
 bird_group = pygame.sprite.Group()
 bird_group.add(flappy)
 
-
 pipe_group = pygame.sprite.Group()
-
 
 # create game loop
 run = True
@@ -123,6 +134,20 @@ while run:
 
     # draw the ground
     screen.blit(ground, (ground_scroll, 768))
+
+    # check the score
+    if len(pipe_group) > 0:
+        if bird_group.sprites()[0].rect.left > pipe_group.sprites()[0].rect.left \
+                and bird_group.sprites()[0].rect.right < pipe_group.sprites()[0].rect.right \
+                and pass_pipe is False:
+            pass_pipe = True
+        if pass_pipe is True:
+            if bird_group.sprites()[0].rect.left > pipe_group.sprites()[0].rect.right:
+                score += 1
+                pass_pipe = False
+
+    # show score
+    draw_text(str(score), font, white, int(screen_width / 2), 30)
 
     # check if bird has hit ground
     if flappy.rect.bottom >= 768:
