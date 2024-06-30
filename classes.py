@@ -21,7 +21,6 @@ class Bird(pygame.sprite.Sprite):
         self.vel = 0
         self.clicked = False
 
-
     def update(self, flying, game_over):
         # handle animation
         self.counter += 1

@@ -43,6 +43,11 @@ restart_img = pygame.transform.scale(restart, (restart.get_width() * 2, restart.
 hover = pygame.image.load("assets/hover_restart.png")
 hover_img = pygame.transform.scale(hover, (hover.get_width() * 2, hover.get_height() * 2))
 
+menu = pygame.image.load("assets/menu.png")
+menu_img = pygame.transform.scale(menu, (menu.get_width() * 1.4, menu.get_height() * 1.4))
+hover_menu = pygame.image.load("assets/hover_menu.png")
+hover_menu_img = pygame.transform.scale(hover_menu, (hover_menu.get_width() * 1.4, hover_menu.get_height() * 1.4))
+
 flappy = Bird(100, int(screen_height / 2))
 
 bird_group = pygame.sprite.Group()
@@ -51,6 +56,7 @@ bird_group.add(flappy)
 pipe_group = pygame.sprite.Group()
 
 button = Button(screen_width // 2 - 120, screen_height // 2 - 100, restart_img, hover_img)
+menu_btn = Button(40, 30, menu_img, hover_menu_img)
 
 # Create game loop
 run = True
@@ -62,6 +68,8 @@ while run:
 
     if not game_started:
         draw_text(screen, "Press SPACE to start", start_font, white, int(screen_width / 2)-170, int(screen_height / 2)-160)
+        menu_click = menu_btn.draw(screen)
+
 
     bird_group.draw(screen)
     bird_group.update(flying, game_over)
