@@ -3,7 +3,7 @@ import pygame
 
 class Bird(pygame.sprite.Sprite):
     def __init__(self, x, y):
-        super().__init__()
+        pygame.sprite.Sprite.__init__(self)
         self.images = []  # list for the bird images for animation
         self.index = 0
         self.counter = 0  # for animation speed control
@@ -15,6 +15,7 @@ class Bird(pygame.sprite.Sprite):
 
         # set initial image and rectangle for the bird
         self.image = self.images[self.index]
+        self.image = pygame.transform.rotate(self.image, 0)
         self.rect = self.image.get_rect()
         self.rect.center = [x, y]
         self.vel = 0

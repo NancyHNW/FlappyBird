@@ -13,6 +13,7 @@ clock = pygame.time.Clock()
 fps = 60
 flying = False
 game_over = False
+game_started = False
 pipe_gap = 150
 pipe_frequency = 1500  # ms
 last_pipe = pygame.time.get_ticks() - pipe_frequency
@@ -27,15 +28,17 @@ pygame.display.set_caption("Flappy Bird")
 
 # Define game font
 font = pygame.font.SysFont("Bauhaus 93", 60)
+start_font = pygame.font.SysFont("Victor Mono", 50)
 
 # Define colours
 white = (255, 255, 255)
+black = (0, 0, 0)
 
 # Load images
 bg = pygame.image.load("assets/bg.png")
 ground = pygame.image.load("assets/ground.png")
-restart_img = pygame.image.load("assets/restart.png")
-
+restart = pygame.image.load("assets/restart.png")
+restart_img = pygame.transform.scale(restart, (restart.get_width() * 2, restart.get_height() * 2))
 flappy = Bird(100, int(screen_height / 2))
 
 bird_group = pygame.sprite.Group()
@@ -43,7 +46,7 @@ bird_group.add(flappy)
 
 pipe_group = pygame.sprite.Group()
 
-button = Button(screen_width // 2 - 50, screen_height // 2 - 100, restart_img)
+button = Button(screen_width // 2 - 100, screen_height // 2 - 100, restart_img)
 
 # Create game loop
 run = True
@@ -52,6 +55,9 @@ while run:
 
     # Add background image
     screen.blit(bg, (0, 0))
+
+    if not game_started:
+        draw_text(screen, "Press SPACE to start", start_font, white, int(screen_width / 2)-170, int(screen_height / 2)-160)
 
     bird_group.draw(screen)
     bird_group.update(flying, game_over)
@@ -108,6 +114,7 @@ while run:
         if button.draw(screen):
             score = reset_game(pipe_group, flappy, screen_height)
             game_over = False
+            game_started = False
 
     # Stop loop when user exits out of window
     for event in pygame.event.get():
@@ -116,6 +123,7 @@ while run:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE and not flying and not game_over:
                 flying = True
+                game_started = True
 
     pygame.display.update()
 
