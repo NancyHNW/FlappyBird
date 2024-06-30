@@ -37,8 +37,12 @@ black = (0, 0, 0)
 # Load images
 bg = pygame.image.load("assets/bg.png")
 ground = pygame.image.load("assets/ground.png")
+
 restart = pygame.image.load("assets/restart.png")
 restart_img = pygame.transform.scale(restart, (restart.get_width() * 2, restart.get_height() * 2))
+hover = pygame.image.load("assets/hover_restart.png")
+hover_img = pygame.transform.scale(hover, (hover.get_width() * 2, hover.get_height() * 2))
+
 flappy = Bird(100, int(screen_height / 2))
 
 bird_group = pygame.sprite.Group()
@@ -46,7 +50,7 @@ bird_group.add(flappy)
 
 pipe_group = pygame.sprite.Group()
 
-button = Button(screen_width // 2 - 100, screen_height // 2 - 100, restart_img)
+button = Button(screen_width // 2 - 120, screen_height // 2 - 100, restart_img, hover_img)
 
 # Create game loop
 run = True

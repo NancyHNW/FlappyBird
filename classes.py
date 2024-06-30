@@ -21,6 +21,7 @@ class Bird(pygame.sprite.Sprite):
         self.vel = 0
         self.clicked = False
 
+
     def update(self, flying, game_over):
         # handle animation
         self.counter += 1
@@ -82,23 +83,27 @@ class Pipe(pygame.sprite.Sprite):
 
 
 class Button:
-    def __init__(self, x, y, image):
+    def __init__(self, x, y, image, hover_image=None):
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
+        self.hover_image = hover_image
 
     def draw(self, screen):
         # track if the button is clicked
         clicked = False
+
+        # draw button
+        screen.blit(self.image, (self.rect.x, self.rect.y))
 
         # get mouse position
         pos = pygame.mouse.get_pos()
 
         # check if mouse is hovered over the button & left mouse btn clicked
         if self.rect.collidepoint(pos):
+            if self.hover_image is not None:
+                screen.blit(self.hover_image, (self.rect.x, self.rect.y))
             if pygame.mouse.get_pressed()[0] == 1:
                 clicked = True
 
-        # draw button
-        screen.blit(self.image, (self.rect.x, self.rect.y))
         return clicked
