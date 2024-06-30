@@ -29,14 +29,10 @@ font = pygame.font.SysFont("Bauhaus 93", 60)
 # define colours
 white = (255, 255, 255)
 
-# load background
-bg = pygame.image.load("assets/bg.png")
-ground = pygame.image.load("assets/ground.png")
-
-
-def draw_text(text, font, colour, x, y):
-    img = font.render(text, True, colour)
-    screen.blit(img, (x, y))
+# load images
+bg = pygame.image.load("assets/bg.png")  # background
+ground = pygame.image.load("assets/ground.png")  # ground
+restart_img = pygame.image.load("assets/restart.png")  # restart button
 
 
 class Bird(pygame.sprite.Sprite):
@@ -113,12 +109,51 @@ class Pipe(pygame.sprite.Sprite):
             self.kill()
 
 
+class Button():
+    def __init__(self, x, y, image):
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+
+    def draw(self):
+
+        clicked = False
+
+        # get mouse position
+        pos = pygame.mouse.get_pos()
+
+        # check if mouse is hovered over the button & left mouse btn clicked
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] == 1:
+                clicked = True
+
+        # draw button
+        screen.blit(self.image, (self.rect.x, self.rect.y))
+
+        return clicked
+
+
+def draw_text(text, font, colour, x, y):
+    img = font.render(text, True, colour)
+    screen.blit(img, (x, y))
+
+
+def reset_game():
+    pipe_group.empty()
+    flappy.rect.x = 100
+    flappy.rect.y = int(screen_height / 2)
+    score = 0
+    return score
+
+
 flappy = Bird(100, int(screen_height / 2))
 
 bird_group = pygame.sprite.Group()
 bird_group.add(flappy)
 
 pipe_group = pygame.sprite.Group()
+
+button = Button(screen_width//2 - 50, screen_height//2 - 100, restart_img)
 
 # create game loop
 run = True
@@ -179,6 +214,11 @@ while run:
         # only update pipe if game not over
         pipe_group.update()
 
+    # reset game if game over
+    if game_over is True:
+        if button.draw():
+            score = reset_game()
+            game_over = False
     # stop loop when user exits out of window
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
