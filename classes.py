@@ -129,15 +129,18 @@ class Menu:
     def __init__(self):
         self.bird_colour = "red"
         self.colour_btns = {
-            'red': Button(200, 200, pygame.image.load("assets/birdred2.png")),
-            'yellow': Button(100, 200, pygame.image.load("assets/birdyellow2.png")),
+            'red': Button(100, 300, pygame.image.load("assets/birdred2.png")),
+            'yellow': Button(200, 300, pygame.image.load("assets/birdyellow2.png")),
+            'green': Button(300, 300, pygame.image.load("assets/birdgreen2.png")),
+            'blue': Button(400, 300, pygame.image.load("assets/birdblue2.png"))
         }
         back = pygame.transform.scale(pygame.image.load("assets/back.png"), (85 * 1.4, 42 * 1.4))
         back_hover = pygame.transform.scale(pygame.image.load("assets/hover_back.png"), (85 * 1.4, 42 * 1.4))
         self.back_btn = Button(700, 30, back, back_hover)
 
     def draw(self, screen):
-        draw_text(screen, "Select Bird Color", pygame.font.SysFont("Victor Mono", 50), (255, 255, 255), 250, 100)
+        draw_text(screen, "Select Bird Colour", pygame.font.SysFont("Victor Mono", 50), (255, 255, 255), 250, 100)
+        draw_text(screen, "Current Bird Colour : " + str(self.bird_colour), pygame.font.SysFont("Victor Mono", 35), (255, 255, 255), 250, 150)
         for color, button in self.colour_btns.items():
             button.draw(screen)
         self.back_btn.draw(screen)
@@ -150,7 +153,6 @@ class Menu:
             if button.rect.collidepoint(pos) and mouse_pressed[0]:
                 self.bird_colour = colour
                 bird.update_colour(colour)
-                print("clicked")
 
         if self.back_btn.rect.collidepoint(pos) and mouse_pressed[0]:
             return True
