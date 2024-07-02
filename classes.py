@@ -5,15 +5,11 @@ from functions import draw_text, reset_game
 class Bird(pygame.sprite.Sprite):
     def __init__(self, x, y, colour="red"):
         pygame.sprite.Sprite.__init__(self)
-        self.images = []  # list for the bird images for animation
+        self.colour = colour
+        self.load_images()
         self.index = 0
         self.counter = 0  # for animation speed control
-        self.colour = colour
 
-        # load bird images qnd add to list
-        for num in range(1, 4):
-            img = pygame.image.load(f"assets/bird{self.colour}{num}.png")
-            self.images.append(img)
 
         # set initial image and rectangle for the bird
         self.image = self.images[self.index]
@@ -23,12 +19,14 @@ class Bird(pygame.sprite.Sprite):
         self.vel = 0
         self.clicked = False
 
-    def update(self, flying, game_over):
-
-        # load bird images qnd add to list
+    def load_images(self):
+        self.images = []  # list for the bird images for animation
+        # load bird images and add to list
         for num in range(1, 4):
             img = pygame.image.load(f"assets/bird{self.colour}{num}.png")
             self.images.append(img)
+
+    def update(self, flying, game_over):
 
         # handle animation
         self.counter += 1
@@ -44,7 +42,6 @@ class Bird(pygame.sprite.Sprite):
                 self.rect.y += int(self.vel)
 
         if not game_over:
-
             # rotate through images for animation
             if self.counter > flat_cooldown:
                 self.counter = 0
@@ -68,7 +65,9 @@ class Bird(pygame.sprite.Sprite):
 
     def update_colour(self, new_colour):
         self.colour = new_colour
-        self.update()
+        self.load_images()
+        self.index = 0
+        self.counter = 0
 
 
 class Pipe(pygame.sprite.Sprite):
@@ -110,7 +109,9 @@ class Button:
         # check if mouse is hovered over the button & left mouse btn clicked
         if self.rect.collidepoint(pos):
             if self.hover_image is not None:
-                screen.blit(self.hover_image, (self.rect.x, self.rect.y))
+                screen.blit(self.hover_image, self.rect.topleft)
+            else:
+                screen.blit(self.image, self.rect.topleft)
             if mouse_pressed and not self.clicked:
                 self.clicked = True
                 return True
@@ -149,6 +150,8 @@ class Menu:
             if button.rect.collidepoint(pos) and mouse_pressed[0]:
                 self.bird_colour = colour
                 bird.update_colour(colour)
+                print("clicked")
+
         if self.back_btn.rect.collidepoint(pos) and mouse_pressed[0]:
             return True
         return False
