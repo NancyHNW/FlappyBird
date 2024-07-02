@@ -126,13 +126,20 @@ class Button:
 
 
 class Menu:
+
     def __init__(self):
+        scale = 1.8
         self.bird_colour = "red"
+        r = pygame.transform.scale(pygame.image.load("assets/birdred2.png"), (51 * scale, 36 * scale))
+        y = pygame.transform.scale(pygame.image.load("assets/birdyellow2.png"), (51 * scale, 36 * scale))
+        g = pygame.transform.scale(pygame.image.load("assets/birdgreen2.png"), (51 * scale, 36 * scale))
+        b = pygame.transform.scale(pygame.image.load("assets/birdblue2.png"), (51 * scale, 36 * scale))
+
         self.colour_btns = {
-            'red': Button(100, 300, pygame.image.load("assets/birdred2.png")),
-            'yellow': Button(200, 300, pygame.image.load("assets/birdyellow2.png")),
-            'green': Button(300, 300, pygame.image.load("assets/birdgreen2.png")),
-            'blue': Button(400, 300, pygame.image.load("assets/birdblue2.png"))
+            'red': Button(100, 280, r),
+            'yellow': Button(280, 280, y),
+            'green': Button(460, 280, g),
+            'blue': Button(640, 280, b)
         }
         back = pygame.transform.scale(pygame.image.load("assets/back.png"), (85 * 1.4, 42 * 1.4))
         back_hover = pygame.transform.scale(pygame.image.load("assets/hover_back.png"), (85 * 1.4, 42 * 1.4))
