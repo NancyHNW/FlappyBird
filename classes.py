@@ -1,16 +1,18 @@
 import pygame
+from functions import draw_text, reset_game
 
 
 class Bird(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, colour="red"):
         pygame.sprite.Sprite.__init__(self)
         self.images = []  # list for the bird images for animation
         self.index = 0
         self.counter = 0  # for animation speed control
+        self.colour = colour
 
-        # load bird images nd add to list
+        # load bird images qnd add to list
         for num in range(1, 4):
-            img = pygame.image.load(f"assets/bird{num}.png")
+            img = pygame.image.load(f"assets/bird{self.colour}{num}.png")
             self.images.append(img)
 
         # set initial image and rectangle for the bird
@@ -22,6 +24,12 @@ class Bird(pygame.sprite.Sprite):
         self.clicked = False
 
     def update(self, flying, game_over):
+
+        # load bird images qnd add to list
+        for num in range(1, 4):
+            img = pygame.image.load(f"assets/bird{self.colour}{num}.png")
+            self.images.append(img)
+
         # handle animation
         self.counter += 1
         flat_cooldown = 5  # speed control
@@ -58,6 +66,10 @@ class Bird(pygame.sprite.Sprite):
         else:  # if game is over, turn the bird 90 degree clockwise (face down)
             self.image = pygame.transform.rotate(self.images[self.index], -90)
 
+    def update_colour(self, new_colour):
+        self.colour = new_colour
+        self.update()
+
 
 class Pipe(pygame.sprite.Sprite):
     def __init__(self, x, y, position, pipe_gap):
@@ -87,22 +99,56 @@ class Button:
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
         self.hover_image = hover_image
+        self.clicked = False
 
     def draw(self, screen):
-        # track if the button is clicked
-        clicked = False
 
-        # draw button
-        screen.blit(self.image, (self.rect.x, self.rect.y))
-
-        # get mouse position
+        # get mouse position & click
         pos = pygame.mouse.get_pos()
+        mouse_pressed = pygame.mouse.get_pressed()[0]
 
         # check if mouse is hovered over the button & left mouse btn clicked
         if self.rect.collidepoint(pos):
             if self.hover_image is not None:
                 screen.blit(self.hover_image, (self.rect.x, self.rect.y))
-            if pygame.mouse.get_pressed()[0] == 1:
-                clicked = True
+            if mouse_pressed and not self.clicked:
+                self.clicked = True
+                return True
+        else:
+            # draw button
+            screen.blit(self.image, (self.rect.x, self.rect.y))
 
-        return clicked
+        if not mouse_pressed:
+            self.clicked = False
+
+        return False
+
+
+class Menu:
+    def __init__(self):
+        self.bird_colour = "red"
+        self.colour_btns = {
+            'red': Button(200, 200, pygame.image.load("assets/birdred2.png")),
+            'yellow': Button(100, 200, pygame.image.load("assets/birdyellow2.png")),
+        }
+        back = pygame.transform.scale(pygame.image.load("assets/back.png"), (85 * 1.4, 42 * 1.4))
+        back_hover = pygame.transform.scale(pygame.image.load("assets/hover_back.png"), (85 * 1.4, 42 * 1.4))
+        self.back_btn = Button(700, 30, back, back_hover)
+
+    def draw(self, screen):
+        draw_text(screen, "Select Bird Color", pygame.font.SysFont("Victor Mono", 50), (255, 255, 255), 250, 100)
+        for color, button in self.colour_btns.items():
+            button.draw(screen)
+        self.back_btn.draw(screen)
+
+    def update(self, bird):
+        pos = pygame.mouse.get_pos()
+        mouse_pressed = pygame.mouse.get_pressed()
+
+        for colour, button in self.colour_btns.items():
+            if button.rect.collidepoint(pos) and mouse_pressed[0]:
+                self.bird_colour = colour
+                bird.update_colour(colour)
+        if self.back_btn.rect.collidepoint(pos) and mouse_pressed[0]:
+            return True
+        return False

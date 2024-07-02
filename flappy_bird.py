@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 import random
-from classes import Bird, Pipe, Button
+from classes import Bird, Pipe, Button, Menu
 from functions import draw_text, reset_game
 
 pygame.init()
@@ -19,6 +19,7 @@ pipe_frequency = 1500  # ms
 last_pipe = pygame.time.get_ticks() - pipe_frequency
 score = 0
 pass_pipe = False
+menu_click = False
 
 # Create game window
 screen_width = 864
@@ -58,6 +59,8 @@ pipe_group = pygame.sprite.Group()
 button = Button(screen_width // 2 - 120, screen_height // 2 - 100, restart_img, hover_img)
 menu_btn = Button(40, 30, menu_img, hover_menu_img)
 
+menu = Menu()
+
 # Create game loop
 run = True
 while run:
@@ -66,14 +69,19 @@ while run:
     # Add background image
     screen.blit(bg, (0, 0))
 
-    if not game_started:
+    if not game_started and not menu_click:
         draw_text(screen, "Press SPACE to start", start_font, white, int(screen_width / 2)-170, int(screen_height / 2)-160)
         menu_click = menu_btn.draw(screen)
 
+    if menu_click:
+        menu.draw(screen)
+        if menu.update(flappy):
+            menu_click = False
 
-    bird_group.draw(screen)
-    bird_group.update(flying, game_over)
-    pipe_group.draw(screen)
+    if not menu_click:
+        bird_group.draw(screen)
+        bird_group.update(flying, game_over)
+        pipe_group.draw(screen)
 
     # Draw the ground
     screen.blit(ground, (ground_scroll, 768))
@@ -90,7 +98,8 @@ while run:
                 pass_pipe = False
 
     # Show score
-    draw_text(screen, str(score), font, white, int(screen_width / 2), 30)
+    if not menu_click and flying:
+        draw_text(screen, str(score), font, white, int(screen_width / 2), 30)
 
     # Check if bird has hit ground
     if flappy.rect.bottom >= 768:
@@ -102,7 +111,7 @@ while run:
         game_over = True
 
     # If game isn't over, keep scrolling the ground
-    if not game_over and flying:
+    if not game_over and flying and not menu_click:
         ground_scroll -= scroll_speed
         if abs(ground_scroll) > 35:
             ground_scroll = 0
